@@ -19,12 +19,13 @@ namespace RMDataManager.Controllers
         //    return "value";
         //}
 
-        public List<UserModel> GetById()
+        [HttpGet]
+        public UserModel GetById()
         {
             string id = RequestContext.Principal.Identity.GetUserId();
             UserData data = new UserData();
             
-            return data.GetUserById(id);
+            return data.GetUserById(id).First();
         }
 
 
