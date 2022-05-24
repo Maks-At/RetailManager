@@ -5,20 +5,34 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using RMDesktopUI.EventModels;
 
 namespace RMDesktopUI.ViewModels
 {
-    public class ShellViewModel : Conductor<object>
+    public class ShellViewModel : Conductor<object>, IHandle<LogOnEvent>
     {
-        public ShellViewModel()
+        private IEventAggregator _events;
+        private SalesViewModel _salesVM;
+        private SimpleContainer _container;
+
+        public ShellViewModel(IEventAggregator events, SalesViewModel salesVM, SimpleContainer container)
         {
-            Activate();
+            _events = events;
+            _salesVM = salesVM;
+            _container = container;
+
+            _events.SubscribeOnPublishedThread(this);
+            ActivateItemAsync(_container.GetInstance<LoginViewModel>());
         }
 
-        private async void Activate()
+        public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
         {
-            await ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
-            Console.WriteLine("Login view activated");
+            await ActivateItemAsync(_salesVM);
         }
+
+        //private async void Activate()
+        //{
+        //    await ActivateItemAsync(IoC.Get<LoginViewModel>());
+        //}
     }
 }
